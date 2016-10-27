@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.semanticweb.receipe.receipeapp">
 
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="25" />
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,6 +30,10 @@
             android:label="@string/title_activity_select_ingredient"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ShowRecommendationActivity"></activity>
+        <activity
+            android:name=".TranslateActivity"
+            android:label="@string/title_activity_translate"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
