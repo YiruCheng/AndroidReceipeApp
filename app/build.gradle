@@ -14,6 +14,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            proguardFile 'proguard-google-api-client.txt'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
