@@ -4,9 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -23,6 +22,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -88,11 +89,14 @@ public class TranslateActivity extends AppCompatActivity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
 //				Copy translation
+				String copiedString = resultList.getItemAtPosition(position).toString();
 				ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE); 
-				ClipData clip = ClipData.newPlainText("WordKeeper", resultList.getItemAtPosition(position).toString());
+				ClipData clip = ClipData.newPlainText("WordKeeper", copiedString);
 				clipboard.setPrimaryClip(clip);
+				Toast.makeText(TranslateActivity.this, copiedString+" has been copied!", Toast.LENGTH_SHORT).show();
 			}
 		});
+    	
 	}
 	
 	private Handler handler = new Handler();
@@ -102,8 +106,9 @@ public class TranslateActivity extends AppCompatActivity {
 		public void run() {
 //			Query from DBpedia via HTTP request
 			String ingredient = inputIngredient.getText().toString();
+			String after_capitalized = ingredient.replace(ingredient.substring(0, 1), ingredient.substring(0, 1).toUpperCase(Locale.ENGLISH));
 			String language = ((LanguageItem)languageList.getSelectedItem()).getAbbreviation();
-			queryDBpedia = String.format("select ?name where{?url rdfs:label \"%s\"@%s, ?name. filter (LANGMATCHES(LANG(?name), \"en\")).}", ingredient, language);
+			queryDBpedia = String.format("select ?name where{?url rdfs:label \"%s\"@%s, ?name. filter (LANGMATCHES(LANG(?name), \"en\")).}", after_capitalized, language);
 			System.out.println("query: "+queryDBpedia);
 			GenericUrl urlCompany = new GenericUrl("http://dbpedia.org/sparql");
 			urlCompany.put("format", "csv");
