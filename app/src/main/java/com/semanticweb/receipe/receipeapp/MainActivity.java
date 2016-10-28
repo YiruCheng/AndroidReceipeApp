@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //UI Buttons
     private Button addIngredientButton;
     private Button showRecommendationButton;
+    private Button resetButton;
     private ListView ingredientListView;
 
     @Override
@@ -40,11 +41,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //get the view components
         addIngredientButton = (Button) findViewById(R.id.addButton);
         showRecommendationButton = (Button) findViewById(R.id.recommendButton);
+        resetButton = (Button)findViewById(R.id.resetButton);
         ingredientListView = (ListView)findViewById(R.id.list_ingredient);
 
         addIngredientButton.setOnClickListener(this);
         showRecommendationButton.setOnClickListener(this);
-
+        resetButton.setOnClickListener(this);
     }
 
     @Override
@@ -66,6 +68,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(v == showRecommendationButton){
             Intent intent = new Intent(MainActivity.this, ShowRecommendationActivity.class);
             startActivity(intent);
+        }else if (v == resetButton){
+            //reset all stuff
+            ingredientList.clear();
+            selectedIngredientList.clear();
+            populateIngredientList();
         }
     }
 

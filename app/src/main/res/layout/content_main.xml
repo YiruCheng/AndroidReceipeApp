@@ -17,13 +17,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/horizontalLinearLayout">
-        <Button android:layout_width="fill_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ButtonLinearLayout"
+        android:weightSum="2">
+        <Button android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/addButton"
             android:text="@string/add_button"
             android:layout_alignParentTop="true"
-            android:clickable="true"/>
-
+            android:clickable="true"
+            android:layout_weight="1"/>
+        <Button android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/resetButton"
+            android:text="@string/reset_button"
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:layout_weight="1"/>
+    </LinearLayout>>
         <ListView android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/list_ingredient"

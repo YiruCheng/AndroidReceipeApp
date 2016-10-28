@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -89,11 +91,19 @@ public class TranslateActivity extends AppCompatActivity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
 //				Copy translation
-				String copiedString = resultList.getItemAtPosition(position).toString();
-				ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE); 
-				ClipData clip = ClipData.newPlainText("WordKeeper", copiedString);
-				clipboard.setPrimaryClip(clip);
-				Toast.makeText(TranslateActivity.this, copiedString+" has been copied!", Toast.LENGTH_SHORT).show();
+				String ingredient = resultList.getItemAtPosition(position).toString();
+
+                //check if the ingredient is already in the main list if not add it
+                if(MainActivity.selectedIngredientList.contains(ingredient)){
+                    Toast.makeText(TranslateActivity.this, R.string.toast_ingredient_already_selected, Toast.LENGTH_SHORT).show();
+                }else{
+                    MainActivity.selectedIngredientList.add(ingredient);
+
+                }
+//				ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+//				ClipData clip = ClipData.newPlainText("WordKeeper", copiedString);
+//				clipboard.setPrimaryClip(clip);
+//				Toast.makeText(TranslateActivity.this, copiedString+" has been copied!", Toast.LENGTH_SHORT).show();
 			}
 		});
     	
@@ -116,18 +126,29 @@ public class TranslateActivity extends AppCompatActivity {
 			httpResult = doHTTPRequest(urlCompany);
 //			System.out.println("Result split: " + temp[1]);
 			String[] temp = httpResult.split("\n");
-			final List<String> data = new ArrayList<String>();
+			final  List<String> data = new ArrayList<String>();
 			for(int i = 1;i < temp.length;i++){
-				data.add(temp[i].replaceAll("\"", ""));
+				data.add(temp[i].replaceAll("\"", "").toLowerCase());
 			}
-			
-			
+
+			//littl pre processing
+			//convert all data to lower form
+			//remove data if same as Query
+			Set<String> uniqueValues = new TreeSet<>();
+			uniqueValues.addAll(data);
+
+			final List<String> uniqueValuesArray = new ArrayList<>(uniqueValues);
+
+			//remoave if if contains word same in English
+		    if(uniqueValuesArray.contains(ingredient.toLowerCase()))
+                uniqueValuesArray.remove(ingredient.toLowerCase());
+
 //			Assign DBpedia result to TextView
 			handler.post(new Runnable() {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, data);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, uniqueValuesArray);
 					resultList.setAdapter(adapter);
 				}
 			});
