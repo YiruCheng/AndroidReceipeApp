@@ -15,6 +15,7 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.semanticweb.receipe.receipeapp.Model.ReceipeAppModel;
 import com.semanticweb.receipe.receipeapp.entity.LanguageItem;
 
 import android.content.ClipData;
@@ -94,11 +95,11 @@ public class TranslateActivity extends AppCompatActivity {
 				String ingredient = resultList.getItemAtPosition(position).toString();
 
                 //check if the ingredient is already in the main list if not add it
-                if(MainActivity.selectedIngredientList.contains(ingredient)){
+                if(ReceipeAppModel.selectedIngredientList.contains(ingredient)){
                     Toast.makeText(TranslateActivity.this, R.string.toast_ingredient_already_selected, Toast.LENGTH_SHORT).show();
                 }else{
-                    MainActivity.selectedIngredientList.add(ingredient);
-
+                    ReceipeAppModel.selectedIngredientList.add(ingredient);
+                    TranslateActivity.super.onBackPressed();
                 }
 //				ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 //				ClipData clip = ClipData.newPlainText("WordKeeper", copiedString);

@@ -3,12 +3,14 @@
     <string name="action_settings">Translate</string>
     <string name="add_button">Add Ingredients</string>
     <string name="search_button">Search Ingredients</string>
-    <string name="reset_button">Rest</string>
+    <string name="reset_button">Reset</string>
     <string name="recomment_button">Recommend Receipes</string>
     <string name="title_activity_select_ingredient">SelectIngredientActivity</string>
     <string name="title_activity_translate">Translation</string>
+    <string name="slide_text">"Sample slide text"</string>
     //Toast Messages
     <string name="toast_ingredient_already_selected">Ingredient already selected</string>
+    <string name="title_activity_main2">Main2Activity</string>
 
 
 </resources>

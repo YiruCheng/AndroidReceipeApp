@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.semanticweb.receipe.receipeapp.Model.ReceipeAppModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +55,11 @@ public class SelectIngredientActivity extends AppCompatActivity {
         ingredientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                       @Override
                                                       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                          String ingredient = MainActivity.ingredientList.get(position);
-                                                          if (MainActivity.selectedIngredientList.contains(ingredient)){
-                                                              MainActivity.selectedIngredientList.remove(ingredient);
+                                                          String ingredient = ReceipeAppModel.ingredientList.get(position);
+                                                          if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
+                                                              ReceipeAppModel.selectedIngredientList.remove(ingredient);
                                                           }else {
-                                                              MainActivity.selectedIngredientList.add(ingredient);
+                                                              ReceipeAppModel.selectedIngredientList.add(ingredient);
                                                           }
                                                           populateIngredientList();
                                                       }
@@ -79,12 +81,12 @@ public class SelectIngredientActivity extends AppCompatActivity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_checked,
-                MainActivity.ingredientList );
+                ReceipeAppModel.ingredientList );
         ingredientListView.setAdapter(arrayAdapter);
 
         //set items checked
-        for(String ingredient : MainActivity.selectedIngredientList){
-            int index = MainActivity.ingredientList.indexOf(ingredient);
+        for(String ingredient : ReceipeAppModel.selectedIngredientList){
+            int index = ReceipeAppModel.ingredientList.indexOf(ingredient);
             ingredientListView.setItemChecked(index,true);
         }
     }

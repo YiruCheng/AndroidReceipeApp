@@ -2,24 +2,20 @@ package com.semanticweb.receipe.receipeapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.semanticweb.receipe.receipeapp.Model.ReceipeAppModel;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    static List<String> ingredientList = new ArrayList<>();
-    static List<String> selectedIngredientList = new ArrayList<>();
 
     //UI Buttons
     private Button addIngredientButton;
@@ -35,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         //just for testing
-        MainActivity.ingredientList.add("butter");
-        MainActivity.ingredientList.add("eggs");
+        ReceipeAppModel.ingredientList.add("egg");
+        ReceipeAppModel.ingredientList.add("butter");
 
         //get the view components
         addIngredientButton = (Button) findViewById(R.id.addButton);
@@ -47,6 +43,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         addIngredientButton.setOnClickListener(this);
         showRecommendationButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
+//
+        ingredientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
+
+                String ingredient = ReceipeAppModel.selectedIngredientList.get(position);
+                Intent intent = new Intent(MainActivity.this, IngrdientSlideActivity.class);
+                intent.putExtra("ingredient",ingredient);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -70,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
         }else if (v == resetButton){
             //reset all stuff
-            ingredientList.clear();
-            selectedIngredientList.clear();
+            ReceipeAppModel.ingredientList.clear();
+            ReceipeAppModel.selectedIngredientList.clear();
             populateIngredientList();
         }
     }
@@ -108,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
-                MainActivity.selectedIngredientList );
+                ReceipeAppModel.selectedIngredientList );
         ingredientListView.setAdapter(arrayAdapter);
 
       }
