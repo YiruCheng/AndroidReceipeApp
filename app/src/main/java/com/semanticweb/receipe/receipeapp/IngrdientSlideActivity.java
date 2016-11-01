@@ -18,11 +18,14 @@ package com.semanticweb.receipe.receipeapp;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+
+import com.semanticweb.receipe.receipeapp.Model.SPARQLQueryEngine;
 
 /**
  * Demonstrates a "screen-slide" animation using a {@link ViewPager}. Because {@link ViewPager}
@@ -56,6 +59,15 @@ public class IngrdientSlideActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_slide);
+
+        //get the ingredient String
+        Intent intent = getIntent();
+        String ingredientStrign = intent.getStringExtra("ingredient");
+
+        //send Request to Get Ingredient Details
+        SPARQLQueryEngine.getIngredeintDetail(ingredientStrign);
+
+
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);

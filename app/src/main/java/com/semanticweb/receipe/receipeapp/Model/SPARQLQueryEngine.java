@@ -25,12 +25,7 @@ import java.util.TreeSet;
 public class SPARQLQueryEngine {
 
     //Qureries
-    private static String ingredientDetailQuery = "select ?thumbnailURL,?abstract, LANG(?abstract), ?languageLabel where {" +
-                                            "  ?fruit dbo:thumbnail ?thumbnailURL." +
-                                            "  ?fruit rdfs:label ?languageLabel." +
-                                            "  ?fruit dbo:abstract ?abstract." +
-                                            "  ?fruit rdfs:label \"%s\"@en" +
-                                            "}";
+    private static String ingredientDetailQuery = "select ?thumbnailURL,?abstract, LANG(?abstract), ?languageLabel where { ?fruit dbo:thumbnail ?thumbnailURL. ?fruit rdfs:label ?languageLabel. ?fruit dbo:abstract ?abstract. ?fruit rdfs:label \"%s\"@en}";
 
 
     private static HttpTransport httpTransport = new NetHttpTransport();
@@ -38,99 +33,33 @@ public class SPARQLQueryEngine {
     private Handler handler = new Handler();
     private static String httpResult;
 
+
     /*
     * Helper Methods for interacting with SPARQL Engine
     * */
-    public  static void getIngredeintDetail(String ingredient){
+    public  static void getIngredeintDetail(final String ingredient){
         //create a Query
-        String query = String.format(ingredientDetailQuery,ingredient);;
-        GenericUrl urlCompany = new GenericUrl("http://dbpedia.org/sparsql");
-        urlCompany.put("format", "csv");
-        urlCompany.put("query", query);
-        httpResult = doHTTPRequest(urlCompany);;
+        //capitalize first letter of the string
+
+        Runnable sendToDBpediaRUnnable = new Runnable() {
+            @Override
+            public void run() {
+//			Query from DBpedia via HTTP request
+                final String ingredientForQuery = Character.toUpperCase(ingredient.charAt(0))+ingredient.substring(1);
+                String query = String.format(ingredientDetailQuery,ingredientForQuery);;
+                GenericUrl urlCompany = new GenericUrl("http://dbpedia.org/sparsql");
+                urlCompany.put("format", "csv");
+                urlCompany.put("query", query);
+                httpResult = doHTTPRequest(urlCompany);;
+                System.out.println(httpResult);
+            }
+        };
+
+        Thread thread = new Thread(sendToDBpediaRUnnable);
+        thread.start();
     }
 
-    private Runnable sendToDBpedia = new Runnable() {
 
-        @Override
-        public void run() {
-////			Query from DBpedia via HTTP request
-//            String ingredient = inputIngredient.getText().toString();
-//            String after_capitalized = ingredient.replace(ingredient.substring(0, 1), ingredient.substring(0, 1).toUpperCase(Locale.ENGLISH));
-//            String language = ((LanguageItem)languageList.getSelectedItem()).getAbbreviation();
-//            queryDBpedia = String.format("select ?name where{?url rdfs:label \"%s\"@%s, ?name. filter (LANGMATCHES(LANG(?name), \"en\")).}", after_capitalized, language);
-//            System.out.println("query: "+queryDBpedia);
-//            GenericUrl urlCompany = new GenericUrl("http://dbpedia.org/sparql");
-//            urlCompany.put("format", "csv");
-//            urlCompany.put("query", queryDBpedia);
-//            httpResult = doHTTPRequest(urlCompany);
-////			System.out.println("Result split: " + temp[1]);
-//            String[] temp = httpResult.split("\n");
-//            final List<String> data = new ArrayList<String>();
-//            for(int i = 1;i < temp.length;i++){
-//                data.add(temp[i].replaceAll("\"", "").toLowerCase());
-//            }
-//
-//            //littl pre processing
-//            //convert all data to lower form
-//            //remove data if same as Query
-//            Set<String> uniqueValues = new TreeSet<>();
-//            uniqueValues.addAll(data);
-//
-//            final List<String> uniqueValuesArray = new ArrayList<>(uniqueValues);
-//
-//            //remoave if if contains word same in English
-//            if(uniqueValuesArray.contains(ingredient.toLowerCase()))
-//                uniqueValuesArray.remove(ingredient.toLowerCase());
-//
-////			Assign DBpedia result to TextView
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    // TODO Auto-generated method stub
-//                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, uniqueValuesArray);
-//                    resultList.setAdapter(adapter);
-//                }
-//            });//			Query from DBpedia via HTTP request
-//            String ingredient = inputIngredient.getText().toString();
-//            String after_capitalized = ingredient.replace(ingredient.substring(0, 1), ingredient.substring(0, 1).toUpperCase(Locale.ENGLISH));
-//            String language = ((LanguageItem)languageList.getSelectedItem()).getAbbreviation();
-//            queryDBpedia = String.format("select ?name where{?url rdfs:label \"%s\"@%s, ?name. filter (LANGMATCHES(LANG(?name), \"en\")).}", after_capitalized, language);
-//            System.out.println("query: "+queryDBpedia);
-//            GenericUrl urlCompany = new GenericUrl("http://dbpedia.org/sparql");
-//            urlCompany.put("format", "csv");
-//            urlCompany.put("query", queryDBpedia);
-//            httpResult = doHTTPRequest(urlCompany);
-////			System.out.println("Result split: " + temp[1]);
-//            String[] temp = httpResult.split("\n");
-//            final List<String> data = new ArrayList<String>();
-//            for(int i = 1;i < temp.length;i++){
-//                data.add(temp[i].replaceAll("\"", "").toLowerCase());
-//            }
-//
-//            //littl pre processing
-//            //convert all data to lower form
-//            //remove data if same as Query
-//            Set<String> uniqueValues = new TreeSet<>();
-//            uniqueValues.addAll(data);
-//
-//            final List<String> uniqueValuesArray = new ArrayList<>(uniqueValues);
-//
-//            //remoave if if contains word same in English
-//            if(uniqueValuesArray.contains(ingredient.toLowerCase()))
-//                uniqueValuesArray.remove(ingredient.toLowerCase());
-//
-////			Assign DBpedia result to TextView
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    // TODO Auto-generated method stub
-//                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, uniqueValuesArray);
-//                    resultList.setAdapter(adapter);
-//                }
-//            });
-        }
-    };
 
     public static String doHTTPRequest(GenericUrl url) {
         String result = "";
