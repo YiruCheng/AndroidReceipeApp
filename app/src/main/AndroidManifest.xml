@@ -38,7 +38,18 @@
             android:name=".TranslateActivity"
             android:label="@string/title_activity_translate"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".IngrdientSlideActivity" />
+        <activity
+            android:name=".IngredientFragment"
+            android:label="@string/title_activity_ingredient_fragment"
+            android:parentActivityName="android.support.v4.app.FragmentActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.support.v4.app.FragmentActivity" />
+        </activity>
+        <activity
+            android:name=".PagerActivity"
+            android:label="@string/title_activity_pager" >
+        </activity>
 
     </application>
 

@@ -5,28 +5,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
 
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.semanticweb.receipe.receipeapp.Model.ReceipeAppModel;
-import com.semanticweb.receipe.receipeapp.entity.LanguageItem;
+import com.semanticweb.receipe.receipeapp.Model.LanguageItem;
+import com.semanticweb.receipe.receipeapp.Model.SPARQLQueryEngine;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -37,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 public class TranslateActivity extends AppCompatActivity {
 	
@@ -45,8 +32,9 @@ public class TranslateActivity extends AppCompatActivity {
 	private Spinner languageList;
 	private EditText inputIngredient;
 	private ListView resultList;
-	private String queryDBpedia;
-	private String httpResult;
+	private SPARQLQueryEngine queryEngine = new SPARQLQueryEngine();
+	protected static List<LanguageItem> languages;
+	private List<Map<String, String>> data;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +49,7 @@ public class TranslateActivity extends AppCompatActivity {
     	resultList = (ListView) findViewById(R.id.resultList);
     	
 //    	Set up language list
-    	List<LanguageItem> languages = new ArrayList<LanguageItem>();
+    	languages = new ArrayList<LanguageItem>();
 		try {
 			InputStream is = getAssets().open("languageList.csv");
 			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
@@ -82,25 +70,27 @@ public class TranslateActivity extends AppCompatActivity {
     	translateBtn.setOnClickListener(new OnClickListener() {
     		@Override
 			public void onClick(View v) {
-    			Thread thread = new Thread(sendToDBpedia);
+    			Thread thread = new Thread(tranlationFromDBpedia);
                 thread.start();
     		}
     	});
-    	
+
     	resultList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
-//				Copy translation
-				String ingredient = resultList.getItemAtPosition(position).toString();
-
+			public void onItemClick(AdapterView<?> arg0, View v, final int position, long id) {
+				Map<String, String> items = (Map<String, String>) resultList.getItemAtPosition(position);
+				Intent intent = new Intent(TranslateActivity.this, PagerActivity.class);
+				intent.putExtra("ingredient", items.get("name"));
+				intent.putExtra("imageURL", items.get("imageURL"));
+                startActivity(intent);
                 //check if the ingredient is already in the main list if not add it
-                if(ReceipeAppModel.selectedIngredientList.contains(ingredient)){
-                    Toast.makeText(TranslateActivity.this, R.string.toast_ingredient_already_selected, Toast.LENGTH_SHORT).show();
-                }else{
-                    ReceipeAppModel.selectedIngredientList.add(ingredient);
-                    TranslateActivity.super.onBackPressed();
-                }
+//                if(ReceipeAppModel.selectedIngredientList.contains(ingredient)){
+//                    Toast.makeText(TranslateActivity.this, R.string.toast_ingredient_already_selected, Toast.LENGTH_SHORT).show();
+//                }else{
+//                    ReceipeAppModel.selectedIngredientList.add(ingredient);
+//                    TranslateActivity.super.onBackPressed();
+//                }
 //				ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 //				ClipData clip = ClipData.newPlainText("WordKeeper", copiedString);
 //				clipboard.setPrimaryClip(clip);
@@ -109,69 +99,26 @@ public class TranslateActivity extends AppCompatActivity {
 		});
     	
 	}
-	
+
 	private Handler handler = new Handler();
-	private Runnable sendToDBpedia = new Runnable() {
+	private Runnable tranlationFromDBpedia = new Runnable() {
 		
 		@Override
 		public void run() {
-//			Query from DBpedia via HTTP request
 			String ingredient = inputIngredient.getText().toString();
-			String after_capitalized = ingredient.replace(ingredient.substring(0, 1), ingredient.substring(0, 1).toUpperCase(Locale.ENGLISH));
 			String language = ((LanguageItem)languageList.getSelectedItem()).getAbbreviation();
-			queryDBpedia = String.format("select ?name where{?url rdfs:label \"%s\"@%s, ?name. filter (LANGMATCHES(LANG(?name), \"en\")).}", after_capitalized, language);
-			System.out.println("query: "+queryDBpedia);
-			GenericUrl urlCompany = new GenericUrl("http://dbpedia.org/sparql");
-			urlCompany.put("format", "csv");
-			urlCompany.put("query", queryDBpedia);
-			httpResult = doHTTPRequest(urlCompany);
-//			System.out.println("Result split: " + temp[1]);
-			String[] temp = httpResult.split("\n");
-			final  List<String> data = new ArrayList<String>();
-			for(int i = 1;i < temp.length;i++){
-				data.add(temp[i].replaceAll("\"", "").toLowerCase());
-			}
-
-			//littl pre processing
-			//convert all data to lower form
-			//remove data if same as Query
-			Set<String> uniqueValues = new TreeSet<>();
-			uniqueValues.addAll(data);
-
-			final List<String> uniqueValuesArray = new ArrayList<>(uniqueValues);
-
-			//remoave if if contains word same in English
-		    if(uniqueValuesArray.contains(ingredient.toLowerCase()))
-                uniqueValuesArray.remove(ingredient.toLowerCase());
-
+			data = queryEngine.getTranslation(ingredient, language);
 //			Assign DBpedia result to TextView
 			handler.post(new Runnable() {
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, uniqueValuesArray);
+//					ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, data);
+					String[] from = new String[]{"name"};
+					int[] to = new int[]{R.id.item};
+					SimpleAdapter adapter = new SimpleAdapter(TranslateActivity.this, data, R.layout.listitem_translate, from, to);
 					resultList.setAdapter(adapter);
 				}
 			});
 		}
 	};
-	
-	private static HttpTransport httpTransport = new NetHttpTransport();
-    private static HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-	
-	public static String doHTTPRequest(GenericUrl url) {
-		String result = "";
-		try {
-			HttpRequest request = requestFactory.buildGetRequest(url);
-		    HttpResponse httpResponse = request.execute();
-		    
-		    result = httpResponse.parseAsString();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-	
-	
 }

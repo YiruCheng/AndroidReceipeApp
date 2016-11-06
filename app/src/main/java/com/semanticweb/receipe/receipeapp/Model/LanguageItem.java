@@ -1,4 +1,4 @@
-package com.semanticweb.receipe.receipeapp.entity;
+package com.semanticweb.receipe.receipeapp.Model;
 
 public class LanguageItem {
 	private String name;
