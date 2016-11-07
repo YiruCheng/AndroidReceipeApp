@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.semanticweb.receipe.receipeapp.Model.LanguageItem;
 import com.semanticweb.receipe.receipeapp.Model.SPARQLQueryEngine;
@@ -23,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 
 public class TranslateActivity extends AppCompatActivity {
@@ -34,7 +32,7 @@ public class TranslateActivity extends AppCompatActivity {
 	private ListView resultList;
 	private SPARQLQueryEngine queryEngine = new SPARQLQueryEngine();
 	protected static List<LanguageItem> languages;
-	private List<Map<String, String>> data;
+	private List<String> data;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +77,9 @@ public class TranslateActivity extends AppCompatActivity {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, final int position, long id) {
-				Map<String, String> items = (Map<String, String>) resultList.getItemAtPosition(position);
+//				Map<String, String> items = (Map<String, String>) resultList.getItemAtPosition(position);
 				Intent intent = new Intent(TranslateActivity.this, PagerActivity.class);
-				intent.putExtra("ingredient", items.get("name"));
-				intent.putExtra("imageURL", items.get("imageURL"));
+				intent.putExtra("ingredient", resultList.getItemAtPosition(position).toString());
                 startActivity(intent);
                 //check if the ingredient is already in the main list if not add it
 //                if(ReceipeAppModel.selectedIngredientList.contains(ingredient)){
@@ -108,14 +105,15 @@ public class TranslateActivity extends AppCompatActivity {
 			String ingredient = inputIngredient.getText().toString();
 			String language = ((LanguageItem)languageList.getSelectedItem()).getAbbreviation();
 			data = queryEngine.getTranslation(ingredient, language);
+			
 //			Assign DBpedia result to TextView
 			handler.post(new Runnable() {
 				@Override
 				public void run() {
-//					ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, data);
-					String[] from = new String[]{"name"};
-					int[] to = new int[]{R.id.item};
-					SimpleAdapter adapter = new SimpleAdapter(TranslateActivity.this, data, R.layout.listitem_translate, from, to);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(TranslateActivity.this, android.R.layout.simple_list_item_1, data);
+//					String[] from = new String[]{"name"};
+//					int[] to = new int[]{R.id.item};
+//					SimpleAdapter adapter = new SimpleAdapter(TranslateActivity.this, data, R.layout.listitem_translate, from, to);
 					resultList.setAdapter(adapter);
 				}
 			});
