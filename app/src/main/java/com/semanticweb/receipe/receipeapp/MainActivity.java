@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         //just for testing
-        ReceipeAppModel.ingredientList.add("egg");
-        ReceipeAppModel.ingredientList.add("butter");
+        //ReceipeAppModel.ingredientList.add("egg");
+        //ReceipeAppModel.ingredientList.add("butter");
 
         //get the view components
         addIngredientButton = (Button) findViewById(R.id.addButton);

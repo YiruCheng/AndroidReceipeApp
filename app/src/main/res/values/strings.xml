@@ -4,7 +4,7 @@
     <string name="app_name">ReceipeApp</string>
     <string name="action_settings">Translate</string>
     <string name="add_button">Add Ingredients</string>
-    <string name="search_button">Search Ingredients</string>
+    <string name="search_button">Search</string>
     <string name="reset_button">Reset</string>
     <string name="recomment_button">Recommend Receipes</string>
     <string name="title_activity_select_ingredient">SelectIngredientActivity</string>
