@@ -55,7 +55,10 @@ public class SelectIngredientActivity extends AppCompatActivity {
     private ProgressDialog progress;
     private EditText textView;
     ArrayAdapter<String> arrayAdapter;
-
+    //ingredeintSearchList
+    List ingredientSearchListGlobal;
+    //check whether search list is visible
+    Boolean searchList = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,13 +140,29 @@ public class SelectIngredientActivity extends AppCompatActivity {
         ingredientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                       @Override
                                                       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                          String ingredient = ReceipeAppModel.ingredientList.get(position);
-                                                          if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
-                                                              ReceipeAppModel.selectedIngredientList.remove(ingredient);
-                                                          }else {
-                                                              ReceipeAppModel.selectedIngredientList.add(ingredient);
+
+                                                          String ingredient;
+                                                          if(!searchList){
+                                                              //search from ingredient List
+                                                              ingredient = ReceipeAppModel.ingredientList.get(position);
+
+                                                              if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
+                                                                  ReceipeAppModel.selectedIngredientList.remove(ingredient);
+                                                              }else {
+                                                                  ReceipeAppModel.selectedIngredientList.add(ingredient);
+                                                              }
+
+                                                              populateIngredientList();
+                                                          }else{
+                                                              ingredient = (String) ingredientSearchListGlobal.get(position);
+                                                              if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
+                                                                  ReceipeAppModel.selectedIngredientList.remove(ingredient);
+                                                              }else {
+                                                                  ReceipeAppModel.selectedIngredientList.add(ingredient);
+                                                              }
+
+                                                              populateIngredientList(ingredientSearchListGlobal);
                                                           }
-                                                          populateIngredientList();
                                                       }
                                                   });
     }
@@ -160,6 +179,8 @@ public class SelectIngredientActivity extends AppCompatActivity {
         // This is the array adapter, it takes the context of the activity as a
         // first parameter, the type of list view as a second parameter and your
         // array as a third parameter.
+        ingredientSearchListGlobal = ingredientSearchList;
+
         arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_checked,
@@ -168,9 +189,10 @@ public class SelectIngredientActivity extends AppCompatActivity {
 
         //set items checked
         for(String ingredient : ReceipeAppModel.selectedIngredientList){
-            int index = ReceipeAppModel.ingredientList.indexOf(ingredient);
+            int index = ingredientSearchListGlobal.indexOf(ingredient);
             ingredientListView.setItemChecked(index,true);
         }
+        searchList = true;
     }
 
     public void populateIngredientList(){
@@ -188,6 +210,8 @@ public class SelectIngredientActivity extends AppCompatActivity {
             int index = ReceipeAppModel.ingredientList.indexOf(ingredient);
             ingredientListView.setItemChecked(index,true);
         }
+
+        searchList = false;
     }
 
 

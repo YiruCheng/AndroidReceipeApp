@@ -43,6 +43,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         addIngredientButton.setOnClickListener(this);
         showRecommendationButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
+
+        ingredientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
     }
 
     @Override
