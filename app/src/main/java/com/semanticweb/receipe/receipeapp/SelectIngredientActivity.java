@@ -1,12 +1,15 @@
 package com.semanticweb.receipe.receipeapp;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -76,6 +79,8 @@ public class SelectIngredientActivity extends AppCompatActivity {
         }
 
 
+        //set back button to true
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //set the views
         ingredientListView = (ListView) findViewById(R.id.ingredientList);
         searchReceipeButton = (Button)findViewById(R.id.searchButton);
@@ -141,28 +146,71 @@ public class SelectIngredientActivity extends AppCompatActivity {
                                                       @Override
                                                       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                                                          String ingredient;
-                                                          if(!searchList){
-                                                              //search from ingredient List
-                                                              ingredient = ReceipeAppModel.ingredientList.get(position);
+                                                          //unselect the listview
+                                                          ingredientListView.setItemChecked(position,false);
 
-                                                              if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
-                                                                  ReceipeAppModel.selectedIngredientList.remove(ingredient);
-                                                              }else {
-                                                                  ReceipeAppModel.selectedIngredientList.add(ingredient);
+
+                                                          if (!searchList){
+
+                                                              String ingredientSelected = ReceipeAppModel.ingredientList.get(position);
+                                                              ingredientSelected = ingredientSelected.substring(0,ingredientSelected.indexOf(":"));
+
+                                                              if((ReceipeAppModel.selectedIngredientList.indexOf(ingredientSelected+":0") == -1 )&&
+                                                                      ( ReceipeAppModel.selectedIngredientList.indexOf(ingredientSelected+":1") == -1) )
+                                                                showDialogAndAddIngredientWithPriority(SelectIngredientActivity.this,"Select Priority","",position);
+                                                              else{
+                                                                  if ((ReceipeAppModel.selectedIngredientList.indexOf(ingredientSelected+":0") != -1 )){
+                                                                      //remove ingredient with low priority
+                                                                      ReceipeAppModel.selectedIngredientList.remove(ingredientSelected+":0");
+                                                                  }else{
+                                                                      //remove ingredient with high priority
+                                                                      ReceipeAppModel.selectedIngredientList.remove(ingredientSelected+":1");
+                                                                  }
+                                                                  populateIngredientList();
                                                               }
+                                                          }else {
 
-                                                              populateIngredientList();
-                                                          }else{
-                                                              ingredient = (String) ingredientSearchListGlobal.get(position);
-                                                              if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
-                                                                  ReceipeAppModel.selectedIngredientList.remove(ingredient);
-                                                              }else {
-                                                                  ReceipeAppModel.selectedIngredientList.add(ingredient);
+                                                              String ingredientSelected = (String) ingredientSearchListGlobal.get(position);
+                                                              ingredientSelected = ingredientSelected.substring(0,ingredientSelected.indexOf(":"));
+
+                                                              if((ReceipeAppModel.selectedIngredientList.indexOf(ingredientSelected+":0") == -1 )&&
+                                                                      ( ReceipeAppModel.selectedIngredientList.indexOf(ingredientSelected+":1") == -1) )
+                                                                  showDialogAndAddIngredientWithPriority(SelectIngredientActivity.this,"Select Priority","",position);
+                                                              else{
+                                                                  if ((ReceipeAppModel.selectedIngredientList.indexOf(ingredientSelected+":0") != -1 )){
+                                                                      //remove ingredient with low priority
+                                                                      ReceipeAppModel.selectedIngredientList.remove(ingredientSelected+":0");
+                                                                  }else{
+                                                                      //remove ingredient with high priority
+                                                                      ReceipeAppModel.selectedIngredientList.remove(ingredientSelected+":1");
+                                                                  }
+                                                                  populateIngredientList(ingredientSearchListGlobal);
                                                               }
-
-                                                              populateIngredientList(ingredientSearchListGlobal);
                                                           }
+
+
+//                                                          String ingredient;
+//                                                          if(!searchList){
+//                                                              //search from ingredient List
+//                                                              ingredient = ReceipeAppModel.ingredientList.get(position);
+//
+//                                                              if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
+//                                                                  ReceipeAppModel.selectedIngredientList.remove(ingredient);
+//                                                              }else {
+//                                                                  ReceipeAppModel.selectedIngredientList.add(ingredient);
+//                                                              }
+//
+//                                                              populateIngredientList();
+//                                                          }else{
+//                                                              ingredient = (String) ingredientSearchListGlobal.get(position);
+//                                                              if (ReceipeAppModel.selectedIngredientList.contains(ingredient)){
+//                                                                  ReceipeAppModel.selectedIngredientList.remove(ingredient);
+//                                                              }else {
+//                                                                  ReceipeAppModel.selectedIngredientList.add(ingredient);
+//                                                              }
+//
+//                                                              populateIngredientList(ingredientSearchListGlobal);
+//                                                          }
                                                       }
                                                   });
     }
@@ -189,8 +237,12 @@ public class SelectIngredientActivity extends AppCompatActivity {
 
         //set items checked
         for(String ingredient : ReceipeAppModel.selectedIngredientList){
-            int index = ingredientSearchListGlobal.indexOf(ingredient);
-            ingredientListView.setItemChecked(index,true);
+            //normalize value to zero because in ingredient list we have all zero values
+            ingredient = ingredient.replace(":1",":0");
+            if(ingredientSearchListGlobal.indexOf(ingredient) != -1) {
+                int index = ingredientSearchListGlobal.indexOf(ingredient);
+                ingredientListView.setItemChecked(index, true);
+            }
         }
         searchList = true;
     }
@@ -207,10 +259,13 @@ public class SelectIngredientActivity extends AppCompatActivity {
 
         //set items checked
         for(String ingredient : ReceipeAppModel.selectedIngredientList){
-            int index = ReceipeAppModel.ingredientList.indexOf(ingredient);
-            ingredientListView.setItemChecked(index,true);
+            //normalize value to zero because in ingredient list we have all zero values
+            ingredient = ingredient.replace(":1",":0");
+            if(ReceipeAppModel.ingredientList.indexOf(ingredient) != -1) {
+                int index = ReceipeAppModel.ingredientList.indexOf(ingredient);
+                ingredientListView.setItemChecked(index, true);
+            }
         }
-
         searchList = false;
     }
 
@@ -226,37 +281,77 @@ public class SelectIngredientActivity extends AppCompatActivity {
         while (mLine != null) {
             sb.append(mLine); // process line
             mLine = reader.readLine();
-            ReceipeAppModel.ingredientList.add(mLine);
+            //we set the priority to 0 for every object by append :0
+            ReceipeAppModel.ingredientList.add(mLine+":0");
 
             count++;
 
         }
 
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                //Start loading screen
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progress.show();
-//                    }
-//                });
-//
-//                //sorting the List
-//                Collections.sort(ReceipeAppModel.ingredientList);
-//
-//                //Stop loading screen
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progress.dismiss();
-//                    }
-//                });
-//            }
-//        });
-
         reader.close();
         return sb.toString();
+    }
+
+    //for showring Alert View for Adding Priority
+    public void showDialogAndAddIngredientWithPriority(Activity activity, String title, CharSequence message, final int index) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        if (title != null) builder.setTitle(title);
+
+
+
+        builder.setMessage(message);
+        builder.setPositiveButton("High", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String ingredient;
+                if(!searchList){
+                    //search from ingredient List
+                    ingredient = ReceipeAppModel.ingredientList.get(index);
+                    ingredient = ingredient.replace(":0",":1");
+                    ReceipeAppModel.selectedIngredientList.add(ingredient);
+                    populateIngredientList();
+                }else{
+                    ingredient = (String) ingredientSearchListGlobal.get(index);
+                    //add high priority
+                    ingredient = ingredient.replace(":0",":1");
+                    ReceipeAppModel.selectedIngredientList.add(ingredient);
+                    populateIngredientList(ingredientSearchListGlobal);
+                }
+
+            }
+        });
+
+        builder.setNegativeButton("Low", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String ingredient;
+                if(!searchList){
+                    //search from ingredient List
+                    ingredient = ReceipeAppModel.ingredientList.get(index);
+                    ReceipeAppModel.selectedIngredientList.add(ingredient);
+                    populateIngredientList();
+                }else{
+                    ingredient = (String) ingredientSearchListGlobal.get(index);
+                        ReceipeAppModel.selectedIngredientList.add(ingredient);
+                    populateIngredientList(ingredientSearchListGlobal);
+                }
+
+            }
+        });
+
+        builder.show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
