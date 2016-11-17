@@ -31,7 +31,10 @@ import android.widget.Toast;
 import com.semanticweb.receipe.receipeapp.Model.ReceipeAppModel;
 import com.semanticweb.receipe.receipeapp.Utilities.IgnoreCaseComparator;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.SubstringMatcher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -118,10 +121,16 @@ public class SelectIngredientActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 final String textToSearch = (String) textView.getText().toString();
+
+
                 if (!textToSearch.isEmpty()) {
+
                     progress.show();
-                 List filteredList =  select(ReceipeAppModel.ingredientList, having(on(String.class),
-                            Matchers.containsString(textToSearch)));
+                    List<Matcher> matchers = new ArrayList<Matcher>();
+                    matchers.add(Matchers.containsString(textToSearch));
+                    matchers.add(Matchers.containsString(textToSearch.substring(0,1)+textToSearch.substring(0,textToSearch.length()-1)));
+                    List filteredList =  select(ReceipeAppModel.ingredientList, having(on(String.class),
+                            Matchers.anyOf(Matchers.containsString(textToSearch),Matchers.containsString(textToSearch.substring(0,1).toUpperCase()+textToSearch.substring(1,textToSearch.length()-1)))));
 
                     populateIngredientList(filteredList);
                     progress.dismiss();
@@ -129,6 +138,7 @@ public class SelectIngredientActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         resetReceipeButton.setOnClickListener(new View.OnClickListener() {
             @Override
