@@ -73,7 +73,7 @@ public class SelectIngredientActivity extends AppCompatActivity {
         //read file from Assets
         try {
             if (ReceipeAppModel.ingredientList.isEmpty())
-                readFromAssets(this.getBaseContext(),"food_names.txt");
+                readFromAssets(this.getBaseContext(),"foodlist.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -73,19 +73,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(v == showRecommendationButton){
 
             //TODO: For : G_YiRun check if the reciepe name contains 1 that means high priority if it contains 0 that means low priority
-            List<String> selectedReciepes = ReceipeAppModel.selectedIngredientList;
-            for(String receipeToSend : selectedReciepes){
-
-                //HigProirity Receipes
-                if (receipeToSend.contains(":1")){
-                    //High Priority Recipe
-                }else{
-                    //Low Priority Receipes
-                }
-            }
+//            List<String> selectedReciepes = ReceipeAppModel.selectedIngredientList;
+//            for(String receipeToSend : selectedReciepes){
+//
+//                //HigProirity Receipes
+//                if (receipeToSend.contains(":1")){
+//                    //High Priority Recipe
+//                }else{
+//                    //Low Priority Receipes
+//                }
+//            }
 
             //Send to Server after your processing is doen
-
             Intent intent = new Intent(MainActivity.this, ShowRecommendationActivity.class);
             startActivity(intent);
 

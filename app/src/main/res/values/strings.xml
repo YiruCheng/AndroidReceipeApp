@@ -16,5 +16,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_pager">PagerActivity</string>
     <string name="add_to_list_btn">Add it into list</string>
+    <string name="title_activity_recipe_detail">RecipeDetailActivity</string>
 
 </resources>
