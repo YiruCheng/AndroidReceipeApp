@@ -24,6 +24,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+/**
+ * translate ingredient from different language into English.
+ * @author Yi-Ru
+ *
+ */
 public class TranslateActivity extends AppCompatActivity {
 	
 	private Button translateBtn;

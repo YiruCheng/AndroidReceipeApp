@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +27,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class RecipeDetailActivity extends AppCompatActivity {
+/**
+ * show detail of a recipe.
+ * @author Yi-Ru
+ *
+ */
+public class RecipeDetailActivity extends Activity {
 	
 	private ProgressBar progressBar;
 	private TextView recipeName;
@@ -101,7 +105,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
-//								System.out.println("item click: "+keysList.get(position)+": "+relatedNameList.get(position).toString());
+								System.out.println("item click: "+keysList.get(position)+": "+relatedNameList.get(position).toString());
 								handler.post(new Runnable() {
 									@Override
 									public void run() {

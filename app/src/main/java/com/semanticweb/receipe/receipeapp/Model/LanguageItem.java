@@ -1,5 +1,10 @@
 package com.semanticweb.receipe.receipeapp.Model;
 
+/**
+ * model of language.
+ * @author Yi-Ru
+ *
+ */
 public class LanguageItem {
 	private String name;
 	private String abbreviation;

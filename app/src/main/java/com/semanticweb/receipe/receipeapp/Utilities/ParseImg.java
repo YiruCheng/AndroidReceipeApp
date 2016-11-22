@@ -11,6 +11,12 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+/**
+ * image parser to Bitmap.
+ * from URL or Assets.
+ * @author Yi-Ru
+ *
+ */
 public class ParseImg {
 	
 	private BitmapFactory.Options options;

@@ -29,6 +29,12 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 
+/**
+ * send a list of ingredients to python server.
+ * get a list of recommend recipes from server and show them.
+ * @author Yi-Ru
+ *
+ */
 public class ShowRecommendationActivity extends AppCompatActivity {
 	
 	private ListView recommendList;

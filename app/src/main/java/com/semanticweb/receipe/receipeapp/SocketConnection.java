@@ -9,10 +9,15 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Use socket to connect with python server.
+ * @author Yi-Ru
+ *
+ */
 public class SocketConnection {
 	
-//	private static String ip = "192.168.0.101";
-	private static String ip = "134.155.199.128";
+	private static String ip = "192.168.0.24";
+//	private static String ip = "134.155.209.85";
 	private static int port = 2222;
 	private Socket socket;
 	

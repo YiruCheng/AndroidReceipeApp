@@ -49,6 +49,10 @@ import static ch.lambdaj.Lambda.having;
 import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.select;
 
+/**
+ * Implement by Omer.
+ *
+ */
 public class SelectIngredientActivity extends AppCompatActivity {
 
     //ingredient List View

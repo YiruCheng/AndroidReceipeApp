@@ -6,15 +6,13 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.semanticweb.receipe.receipeapp.Utilities.ParseImg;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,6 +29,7 @@ import org.json.JSONObject;
 /**
  * Created by Omer on 10/29/2016.
  * 
+ * separate functions which needs to connect with HTTP.
  * Implement by Yi-Ru at 07/11/2016.
  */
 
@@ -40,6 +39,7 @@ public class SPARQLQueryEngine {
     private static HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
 	private String queryDBpedia;
 	private String httpResult;
+	private ParseImg parseImg = new ParseImg();
 
 
     /*
@@ -155,24 +155,14 @@ public class SPARQLQueryEngine {
 				
 				System.out.println("realURL: "+realURL);
 				
-				url = new URL(realURL);
-				conn = (HttpURLConnection) url.openConnection();
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = 10;
-				bm = BitmapFactory.decodeStream(conn.getInputStream(), null, options);
+				bm = parseImg.parseFromURL(context, realURL);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}else{
-			AssetManager assetManager = context.getAssets();
-			try {
-				InputStream is = assetManager.open("noimage.gif");
-				bm = BitmapFactory.decodeStream(is);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			bm = parseImg.parseFromAssets(context, "noimage.gif");
 		}
 		
 		return bm;

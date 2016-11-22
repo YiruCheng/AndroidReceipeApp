@@ -8,6 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+/**
+ * Each fragment shows a information of this ingredient in different language.
+ * How many language depends on the data in DBpedia.
+ * @author Yi-Ru
+ *
+ */
 public class IngredientFragment extends Fragment {
 	
 	private TextView ingredientName;

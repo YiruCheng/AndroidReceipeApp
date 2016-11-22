@@ -2,6 +2,7 @@ package com.semanticweb.receipe.receipeapp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.semanticweb.receipe.receipeapp.Model.LanguageItem;
@@ -9,12 +10,14 @@ import com.semanticweb.receipe.receipeapp.Model.ReceipeAppModel;
 import com.semanticweb.receipe.receipeapp.Model.SPARQLQueryEngine;
 
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +28,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+/**
+ * Pagers for information of ingredient in every language(if DBpedia has that data).
+ * @author Yi-Ru
+ *
+ */
 public class PagerActivity extends FragmentActivity {
 	
 	private String ingredient;
@@ -54,11 +62,30 @@ public class PagerActivity extends FragmentActivity {
 			
 			@Override
 			public void onClick(View v) {
-				if(ReceipeAppModel.selectedIngredientList.contains(ingredient)){
+            	final String after_capitalized = ingredient.replace(ingredient.substring(0, 1), ingredient.substring(0, 1).toUpperCase(Locale.ENGLISH));
+				if(ReceipeAppModel.selectedIngredientList.contains(after_capitalized+":1") || ReceipeAppModel.selectedIngredientList.contains(after_capitalized+":0")){
                     Toast.makeText(PagerActivity.this, R.string.toast_ingredient_already_selected, Toast.LENGTH_SHORT).show();
                 }else{
-                    ReceipeAppModel.selectedIngredientList.add(ingredient);
-                    PagerActivity.super.onBackPressed();
+                	AlertDialog.Builder builder = new AlertDialog.Builder(PagerActivity.this);
+                	builder.setTitle("Select Priority");
+                	builder.setMessage("");
+                	builder.setPositiveButton("High", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        	ReceipeAppModel.selectedIngredientList.add(after_capitalized+":1");
+                            PagerActivity.super.onBackPressed();
+                        }
+                    });
+
+                    builder.setNegativeButton("Low", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        	ReceipeAppModel.selectedIngredientList.add(after_capitalized+":0");
+                            PagerActivity.super.onBackPressed();
+                        }
+                    });
+
+                    builder.show();
                 }
 			}
 		});

@@ -16,6 +16,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * Adapter for recommend list.
+ * shows image, 1/3 description and recipe name.
+ * @author Yi-Ru
+ *
+ */
 @SuppressLint("ViewHolder")
 public class RecommendListAdapter extends BaseAdapter {
 
@@ -58,8 +64,9 @@ public class RecommendListAdapter extends BaseAdapter {
         holder.recipeImg = (ImageView) rowView.findViewById(R.id.recipeImg);
         
         holder.recipeName.setText(result.get(position).get(from[0]));
-        String descript = result.get(position).get(from[1]);
-        holder.recipeDescription.setText(descript.substring(0, (descript.length()/3)));
+        String temp_desc = result.get(position).get(from[1]);
+        String descript = temp_desc.equals("none")? "" : temp_desc.substring(0, (temp_desc.length()/3));
+        holder.recipeDescription.setText(descript);
         holder.recipeImg.setImageBitmap(imgList.get(position));
 		return rowView;
 	}

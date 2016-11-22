@@ -6,6 +6,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
+/**
+ * Adapter for IngredientFragment.
+ * @author Yi-Ru
+ *
+ */
 public class IngredientPageAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> fragments;
